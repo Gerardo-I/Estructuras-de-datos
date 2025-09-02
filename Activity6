@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+
+    int rows, cols;
+    printf("Add number of rows:");
+    scanf("%d",&rows);
+    printf("Add number of columns:");
+    scanf("%d",&cols);
+    
+    int *A = (int*)malloc((size_t)rows*(size_t)cols*sizeof(int));
+    int *B = (int*)malloc((size_t)rows*(size_t)cols*sizeof(int));
+    int *C = (int*)malloc((size_t)rows*(size_t)cols*sizeof(int));
+         
+        
+    printf("Insert values for A:");
+    for(int i=0; i<rows; i++){
+        for(int j=0; j<cols;j++){
+            scanf("%d",&A[i*cols + j]);
+        }
+    }
+        
+    printf("Insert values for B:");
+        for(int i=0; i<rows; i++){
+            for(int j=0; j<cols;j++){
+            scanf("%d",&B[i*cols + j]);
+        }
+    } 
+    
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+        *(C + i * cols + j) = *(A + i * cols + j) + *(B + i * cols + j);
+        }
+    }
+
+printf("\nMatriz C = A + B:\n");
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+            printf("%d ", *(C + i * cols + j));
+            }
+        printf("\n");
+        }
+
+        free(A);
+        free(B);
+        free(C);
+
+    return 0;
+}
