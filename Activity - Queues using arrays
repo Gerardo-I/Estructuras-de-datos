@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define QUEUESIZE 5
+
+int queue[QUEUESIZE]; 
+int front = 0;
+int rear = 0;
+int numCurrentElements = 0;
+
+int isFull(){
+    if(numCurrentElements == QUEUESIZE)
+       return 1;
+    else
+        return 0; 
+}
+int isEmpty(){
+    if(numCurrentElements == 0)
+        return 1;
+    else
+        return 0;
+}
+
+void enqueue(int val){
+    queue[rear]=val;
+    numCurrentElements++ ;
+    rear++ ;
+    if(rear == QUEUESIZE)
+        rear = 0;
+}
+int dequeue(){
+    int val;
+    val = queue[front];
+    numCurrentElements--;
+    front++;
+    if(front == QUEUESIZE)
+    front = 0;
+    return val;
+}
+void printQueue(){
+printf("\nQueue:");
+if(rear <= front){
+for (int i = front; i < QUEUESIZE; i++)
+printf(" %d ", queue[i]);
+for(int i = 0; i < rear; i++)
+printf(" %d ", queue[i]);
+}
+else{
+for(int i = front; i < rear; i++)
+printf(" %d ", queue[i]);
+}
+printf("\n");
+}
+        
+int main(){
+    int choice, value;
+
+    while (1) {
+        printf("\nChoose an option:\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter number to enqueue: ");
+                scanf("%d", &value);
+                enqueue(value);
+                printQueue();
+                break;
+
+            case 2:
+                value = dequeue();
+                if (value != -1) {
+                    printf("Dequeued: %d\n", value);
+                }
+                printQueue();
+                break;
+
+            case 3:
+                printf("Exiting program.\n");
+                exit(0);
+
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+    
+    return 0;
+}
