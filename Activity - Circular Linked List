@@ -1,0 +1,318 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct node {
+    int data;
+    struct node* next;
+} Node;
+
+Node* head = NULL;   
+Node* tail = NULL;   
+int size = 0;        
+
+
+Node* createNode(int val);
+void insertAtFront(int val);
+void insertAtEnd(int val);
+void insertAtPosition(int val, int pos);
+
+void deleteAtFront();
+void deleteAtEnd();
+void deleteAtPosition(int pos);
+
+Node* search(int val);
+void traverse();
+int getSize();
+bool isEmpty();
+void clear();
+void display();
+Node* getHead();
+Node* getTail();
+
+
+int main() {
+    int choice, val, pos;
+    Node* found;
+
+    do {
+        printf("\n====== CIRCULAR LINKED LIST MENU ======\n");
+        printf("1. Insert at Front\n");
+        printf("2. Insert at End\n");
+        printf("3. Insert at Position\n");
+        printf("4. Delete from Front\n");
+        printf("5. Delete from End\n");
+        printf("6. Delete from Position\n");
+        printf("7. Search\n");
+        printf("8. Traverse\n");
+        printf("9. Display Size\n");
+        printf("10. Is Empty?\n");
+        printf("11. Clear List\n");
+        printf("12. Get Head\n");
+        printf("13. Get Tail\n");
+        printf("14. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+        case 1:
+            printf("Enter value: ");
+            scanf("%d", &val);
+            insertAtFront(val);
+            break;
+        case 2:
+            printf("Enter value: ");
+            scanf("%d", &val);
+            insertAtEnd(val);
+            break;
+        case 3:
+            printf("Enter value: ");
+            scanf("%d", &val);
+            printf("Enter position: ");
+            scanf("%d", &pos);
+            insertAtPosition(val, pos);
+            break;
+        case 4:
+            deleteAtFront();
+            break;
+        case 5:
+            deleteAtEnd();
+            break;
+        case 6:
+            printf("Enter position: ");
+            scanf("%d", &pos);
+            deleteAtPosition(pos);
+            break;
+        case 7:
+            printf("Enter value to search: ");
+            scanf("%d", &val);
+            found = search(val);
+            if (found != NULL)
+                printf("Value %d found!\n", val);
+            else
+                printf("Value %d not found!\n", val);
+            break;
+        case 8:
+            traverse();
+            break;
+        case 9:
+            printf("Size: %d\n", getSize());
+            break;
+        case 10:
+            if (isEmpty())
+                printf("List is empty.\n");
+            else
+                printf("List is NOT empty.\n");
+            break;
+        case 11:
+            clear();
+            printf("List cleared.\n");
+            break;
+        case 12:
+            if (getHead() != NULL)
+                printf("Head: %d\n", getHead()->data);
+            else
+                printf("List is empty.\n");
+            break;
+        case 13:
+            if (getTail() != NULL)
+                printf("Tail: %d\n", getTail()->data);
+            else
+                printf("List is empty.\n");
+            break;
+        case 14:
+            printf("Exiting...\n");
+            break;
+        default:
+            printf("Invalid choice!\n");
+        }
+    } while (choice != 14);
+
+    clear(); 
+    return 0;
+}
+
+
+
+Node* createNode(int val) {
+    Node* newNode = (Node*) malloc(sizeof(Node));
+    if (!newNode) {
+        printf("Memory allocation failed!\n");
+        exit(1);
+    }
+    newNode->data = val;
+    newNode->next = NULL;
+    return newNode;
+}
+
+
+void insertAtFront(int val) {
+    Node* newNode = createNode(val);
+    if (head == NULL) {
+        head = tail = newNode;
+        tail->next = head;
+    } else {
+        newNode->next = head;
+        head = newNode;
+        tail->next = head;
+    }
+    size++;
+}
+
+
+void insertAtEnd(int val) {
+    Node* newNode = createNode(val);
+    if (head == NULL) {
+        head = tail = newNode;
+        tail->next = head;
+    } else {
+        tail->next = newNode;
+        tail = newNode;
+        tail->next = head;
+    }
+    size++;
+}
+
+
+void insertAtPosition(int val, int pos) {
+    if (pos < 1 || pos > size + 1) {
+        printf("Invalid position!\n");
+        return;
+    }
+    if (pos == 1) {
+        insertAtFront(val);
+        return;
+    }
+    if (pos == size + 1) {
+        insertAtEnd(val);
+        return;
+    }
+    Node* newNode = createNode(val);
+    Node* aux = head;
+    for (int i = 1; i < pos - 1; i++) {
+        aux = aux->next;
+    }
+    newNode->next = aux->next;
+    aux->next = newNode;
+    size++;
+}
+
+
+void deleteAtFront() {
+    if (head == NULL) {
+        printf("List is empty!\n");
+        return;
+    }
+    Node* temp = head;
+    if (head == tail) {
+        head = tail = NULL;
+    } else {
+        head = head->next;
+        tail->next = head;
+    }
+    free(temp);
+    size--;
+}
+
+
+void deleteAtEnd() {
+    if (head == NULL) {
+        printf("List is empty!\n");
+        return;
+    }
+    if (head == tail) {
+        free(head);
+        head = tail = NULL;
+    } else {
+        Node* aux = head;
+        while (aux->next != tail) {
+            aux = aux->next;
+        }
+        free(tail);
+        tail = aux;
+        tail->next = head;
+    }
+    size--;
+}
+
+
+void deleteAtPosition(int pos) {
+    if (pos < 1 || pos > size || head == NULL) {
+        printf("Invalid position!\n");
+        return;
+    }
+    if (pos == 1) {
+        deleteAtFront();
+        return;
+    }
+    if (pos == size) {
+        deleteAtEnd();
+        return;
+    }
+    Node* aux = head;
+    for (int i = 1; i < pos - 1; i++) {
+        aux = aux->next;
+    }
+    Node* temp = aux->next;
+    aux->next = temp->next;
+    free(temp);
+    size--;
+}
+
+
+Node* search(int val) {
+    if (head == NULL) return NULL;
+    Node* aux = head;
+    do {
+        if (aux->data == val) return aux;
+        aux = aux->next;
+    } while (aux != head);
+    return NULL;
+}
+
+
+void traverse() {
+    if (head == NULL) {
+        printf("List is empty!\n");
+        return;
+    }
+    Node* aux = head;
+    printf("List: ");
+    do {
+        printf("%d -> ", aux->data);
+        aux = aux->next;
+    } while (aux != head);
+    printf("(back to head)\n");
+}
+
+
+int getSize() {
+    return size;
+}
+
+
+bool isEmpty() {
+    return head == NULL;
+}
+
+
+void clear() {
+    while (!isEmpty()) {
+        deleteAtFront();
+    }
+}
+
+
+void display() {
+    traverse();
+}
+
+
+Node* getHead() {
+    return head;
+}
+
+
+Node* getTail() {
+    return tail;
+}
