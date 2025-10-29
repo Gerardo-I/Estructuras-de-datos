@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+int heap[MAX];
+int size = 0;
+
+
+void insert(int item);
+void reHeapUp(int i);
+int removeMax(void);
+void reHeapDown(int i);
+void showHeap(void);
+void printTreeView(void);
+
+
+int main() {
+    int n, k = 0, item;
+
+    printf("Enter number of integers to insert: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter integer %d: ", i + 1);
+        scanf("%d", &item);
+        insert(item);
+        printf("After inserting %d: ", item);
+        showHeap();
+    }
+
+    printf("\nHeap as Tree:\n");
+    printTreeView();
+
+    for (int i = 0; i < k; i++) {
+        int max = removeMax();
+        printf("Removed max (%d): ", max);
+        showHeap();
+    }
+
+    printf("\nHeap as Tree after removals:\n");
+    printTreeView();
+    return 0;
+}
+
+
+void insert(int item) {
+    if (size >= MAX) {
+        printf("Heap overflow!\n");
+        return;
+    }
+    heap[size] = item;
+    reHeapUp(size);
+    size++;
+}
+
+
+void reHeapUp(int i) {
+    int parent = (i - 1) / 2;
+    while (i > 0 && heap[i] > heap[parent]) {
+        int temp = heap[i];
+        heap[i] = heap[parent];
+        heap[parent] = temp;
+        i = parent;
+        parent = (i - 1) / 2;
+    }
+}
+
+
+int removeMax(void) {
+    if (size == 0) {
+        printf("Heap is empty!\n");
+        return -1;
+    }
+    int max = heap[0];
+    heap[0] = heap[size - 1];
+    size--;
+    reHeapDown(0);
+    return max;
+}
+
+
+void reHeapDown(int i) {
+    int left, right, largest, temp;
+    while (1) {
+        left = 2 * i + 1;
+        right = 2 * i + 2;
+        largest = i;
+
+        if (left < size && heap[left] > heap[largest])
+            largest = left;
+        if (right < size && heap[right] > heap[largest])
+            largest = right;
+
+        if (largest != i) {
+            temp = heap[i];
+            heap[i] = heap[largest];
+            heap[largest] = temp;
+            i = largest;
+        } else {
+            break;
+        }
+    }
+}
+
+
+void showHeap(void) {
+    printf("[ ");
+    for (int i = 0; i < size; i++) {
+        printf("%d ", heap[i]);
+    }
+    printf("]\n");
+}
+
+
+void printTreeView(void) {
+    for (int i = 0; i < size; i++) {
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        printf("Node[%d] = %d ", i, heap[i]);
+        if (left < size) printf(" | Left[%d]=%d", left, heap[left]);
+        if (right < size) printf(" | Right[%d]=%d", right, heap[right]);
+        printf("\n");
+    }
+}
